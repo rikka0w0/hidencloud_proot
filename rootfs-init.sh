@@ -3,3 +3,6 @@ apt update -o Acquire::https::Verify-Peer=false -o Acquire::https::Verify-Host=f
 apt install -y ca-certificates
 apt update
 apt install -y curl wget nano iproute2
+
+echo "==> Installing dropbear..."
+apt install -y dropbear

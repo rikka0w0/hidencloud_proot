@@ -4,7 +4,8 @@ import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-const PORT = 24731;
+const PORT = process.env.SERVER_PORT;
+console.log(`SERVER_PORT=${PORT}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,18 +43,17 @@ function runCommand(command, args = [], options = {}) {
 
 async function runSetupScripts() {
   const setupScript = path.join(__dirname, 'setup.sh');
+  const taskScript = path.join(__dirname, 'proot.sh');
 
-  await runCommand('/bin/sh', [setupScript]);
+  await runCommand(setupScript);
+  await runCommand(taskScript, ['/usr/sbin/dropbear-start.sh', PORT]);
 }
 
 function startServer() {
   const server = net.createServer((socket) => {
     console.log('新连接来自:', socket.remoteAddress);
 
-    const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
-    const args = process.platform === 'win32' ? [] : ['-i'];
-
-    const sh = spawn(shell, args, {
+    const sh = spawn('/bin/bash', ['-i'], {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
 

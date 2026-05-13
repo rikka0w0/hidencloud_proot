@@ -143,3 +143,7 @@ $PROOT /usr/bin/env DEBOOTSTRAP_DIR=/debootstrap /debootstrap/debootstrap --seco
 echo "==> Run first time script:"
 cp -v $HOME/rootfs-init.sh /tmp/proot-tmp/
 $PROOT /bin/bash /tmp/rootfs-init.sh
+
+echo "==> Copy into rootfs:"
+cp -v $HOME/dropbear-start.sh $ROOTFS/usr/sbin/
+chmod 755 $ROOTFS/usr/sbin/dropbear-start.sh
