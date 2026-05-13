@@ -116,28 +116,15 @@ env -i \
   LD_LIBRARY_PATH="$FAKECHROOT_LIBDIR:$FAKEROOT_LIBDIR" \
   DEBOOTSTRAP_DIR="$TOOLS/usr/share/debootstrap" \
   "$TOOLS/usr/bin/fakeroot" \
-  "$TOOLS/usr/bin/fakechroot" \
   "$TOOLS/usr/sbin/debootstrap" \
-    --variant=fakechroot \
+    --foreign \
+    --variant=minbase \
     --arch=arm64 \
     "$SUITE" \
     "$ROOTFS" \
     "$MIRROR" || true
 
 echo "==> Done. Rootfs is at: $ROOTFS"
-
-echo "==> Fix fakechroot absolute symlinks for proot"
-
-for p in dev proc; do
-  if [ -L "$ROOTFS/$p" ]; then
-    echo "Replacing /$p symlink with directory"
-    rm -f "$ROOTFS/$p"
-    mkdir -p "$ROOTFS/$p"
-  fi
-done
-
-mkdir -p "$ROOTFS/sys" "$ROOTFS/tmp"
-chmod 1777 "$ROOTFS/tmp"
 
 echo "==> Downloading static proot:"
 curl -L -o $TOOLS/proot-v5.3.0-aarch64-static \
@@ -149,6 +136,9 @@ $TOOLS/proot-v5.3.0-aarch64-static --version
 PROOT=$HOME/proot.sh
 chmod 755 $PROOT
 $PROOT /bin/sh -c 'echo inside arm64 rootfs; uname -m; id'
+
+echo "==> Second stage debootstrap:"
+$PROOT /usr/bin/env DEBOOTSTRAP_DIR=/debootstrap /debootstrap/debootstrap --second-stage
 
 echo "==> Run first time script:"
 cp -v $HOME/rootfs-init.sh /tmp/proot-tmp/
