@@ -13,7 +13,9 @@ if [ ! -d "$TOOLS" ]; then
       | sed 's/<//; s/>//' \
       | sort -u \
       | xargs -r apt download
+
     apt download libnss-wrapper
+    apt download openssh-server openssh-sftp-server libwrap0
 
     for deb in ./*.deb; do
         dpkg-deb -x "$deb" "$TOOLS"
@@ -46,6 +48,7 @@ export LD_LIBRARY_PATH="$FEXDIR/lib:${LD_LIBRARY_PATH:-}"
 
 export FEX_ROOTFS=/home/container/.local/share/fex-emu/RootFS/Ubuntu_24_04
 
+# Download RootFS, if needed
 if [ ! -f "$FEX_ROOTFS/usr/bin/uname" ]; then
     mkdir -p "$WORK"
     echo "FEX RootFS not found or invalid: $FEX_ROOTFS"
@@ -53,6 +56,9 @@ if [ ! -f "$FEX_ROOTFS/usr/bin/uname" ]; then
     mkdir -p "$FEX_ROOTFS"
     unsquashfs -f -d "$FEX_ROOTFS" "$WORK/rootfs.sqsh"
 fi
+
+# Clean the temp working dir
+[ -d "$WORK" ] && rm -rf "$WORK"
 
 export FEX_PORTABLE=1
 
