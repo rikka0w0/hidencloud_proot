@@ -42,12 +42,8 @@ function runCommand(command, args = [], options = {}) {
 }
 
 async function runSetupScripts() {
-  const setupScript = path.join(__dirname, 'setup.sh');
-  const taskScript = path.join(__dirname, 'proot.sh');
-
-  await runCommand(setupScript);
+  await runCommand(path.join(__dirname, 'sshd.sh'), [PORT]);
   console.log("change this text 1"); // [HIDENCLOUD] Server marked as running...
-  await runCommand(taskScript, ['/usr/sbin/dropbear-start.sh', PORT]);
 }
 
 function startServer() {
