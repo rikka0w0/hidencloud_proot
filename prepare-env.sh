@@ -16,6 +16,7 @@ if [ ! -d "$TOOLS" ]; then
 
     apt download libnss-wrapper
     apt download openssh-server openssh-sftp-server libwrap0
+    apt download screen libutempter0
 
     for deb in ./*.deb; do
         dpkg-deb -x "$deb" "$TOOLS"
@@ -68,3 +69,26 @@ export FEX_OUTPUTLOG=stderr
 # export FEX_HOSTFEATURES=disablesve,disableatomics,disableflagm,disableflagm2,disablerng,disablecrypto,disablefcma,disablelrcpc,disablelrcpc2,disableafp,disablepmull128,disablesvebitperm
 
 "$FEXDIR/bin/FEXInterpreter" /usr/bin/uname -m
+
+
+# Setup NSS for sshd, screen, and ...
+grep -v '^container:' /etc/passwd > /tmp/passwd
+echo 'container:x:997:986::/home/container:/bin/bash' >> /tmp/passwd
+grep -v '^container:' /etc/group > /tmp/group
+echo 'container:x:986:' >> /tmp/group
+
+nss-run() {
+    if [ "$#" -lt 1 ]; then
+        echo "usage: nss-run COMMAND [ARG...]" >&2
+        return 2
+    fi
+
+    LD_PRELOAD="/home/container/tools/usr/lib/aarch64-linux-gnu/libnss_wrapper.so${LD_PRELOAD:+:$LD_PRELOAD}" \
+    NSS_WRAPPER_PASSWD="/tmp/passwd" \
+    NSS_WRAPPER_GROUP="/tmp/group" \
+    "$@"
+}
+
+screen() {
+    SCREENDIR=/tmp/screen nss-run command screen "$@"
+}
