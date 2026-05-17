@@ -61,3 +61,5 @@ echo 'container:x:986:' >> /tmp/group
 
 # Clean the temp working dir
 [ -d "$WORK" ] && rm -rf "$WORK"
+
+exit 0
