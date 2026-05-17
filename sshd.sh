@@ -13,5 +13,5 @@ chmod 600 /home/container/.ssh/authorized_keys
 [ -f /home/container/tools/etc/ssh/sshd_config ] || cp -v /home/container/sshd_config /home/container/tools/etc/ssh/sshd_config
 chmod +x /home/container/sftp-server.sh
 
-nss-run \
-/home/container/tools/usr/sbin/sshd -f /home/container/tools/etc/ssh/sshd_config -p $1 -D -e 2>&1
+nss-run /home/container/tools/usr/sbin/sshd \
+  -f /home/container/tools/etc/ssh/sshd_config -p "${1:-22}" -D -e 2>&1

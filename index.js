@@ -42,7 +42,9 @@ function runCommand(command, args = [], options = {}) {
 }
 
 async function runSetupScripts() {
-  await runCommand(path.join(__dirname, 'sshd.sh'), [PORT]);
+  await runCommand(path.join(__dirname, 'setup-env.sh'));
+  runCommand(path.join(__dirname, 'sslh.sh'), [PORT]);
+  runCommand(path.join(__dirname, 'sshd.sh'));
   console.log("change this text 1"); // [HIDENCLOUD] Server marked as running...
 }
 
