@@ -4,23 +4,16 @@ source /home/container/prepare-env.sh
 
 if [ ! -d "$TOOLS" ]; then
     mkdir -p "$WORK/deb" "$TOOLS"
-    cd "$WORK/deb"
 
-    apt download squashfs-tools
-    apt-cache depends squashfs-tools \
-      | awk '/Depends:/ {print $2}' \
-      | sed 's/<//; s/>//' \
-      | sort -u \
-      | xargs -r apt download
+    # Necessary packages
+    apt-nonroot-install squashfs-tools liblzo2-2
+    apt-nonroot-install libnss-wrapper
+    apt-nonroot-install openssh-server openssh-sftp-server libwrap0
+    apt-nonroot-install sslh libpcre3 libconfig9
 
-    apt download libnss-wrapper
-    apt download openssh-server openssh-sftp-server libwrap0
-    apt download sslh libpcre3 libconfig9
-    apt download screen libutempter0
-
-    for deb in ./*.deb; do
-        dpkg-deb -x "$deb" "$TOOLS"
-    done
+    # Additional utility packages
+    apt-nonroot-install screen libutempter0
+    apt-nonroot-install htop libnl-3-200 libnl-genl-3-200
 fi
 
 # Check if unsquashfs is available and working

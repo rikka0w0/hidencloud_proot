@@ -28,7 +28,11 @@ SSLH demultiplexies the server TCP ingress. It listens on ${SERVER_PORT} and for
 In addition, it forwards HTTP and HTTPS requests to 80 and 443, respectively. Other traffic is forwarded to port 8000.
 
 # Utilities
-1. `source prepare-env.sh` in the shell gives you access to some useful scripts and tools in the `tools` folder, like nss-run and screen.
-2. `nss-run` runs a given command with UID and GID corrected. For some reason, the default `/etc/passwd` and `/etc/group` contain wrong UID and GID for the current user "container". Several tools wont work without `nss-run`.
+1. `source prepare-env.sh` in the shell gives you access to some useful scripts and tools in the `tools` folder, like `nss-run` and `screen`.
+2. `nss-run` runs a given command with UID and GID corrected.  
+   For some reason, the default `/etc/passwd` and `/etc/group` contain wrong UID and GID for the current user "container". Several tools wont work without `nss-run`.
 3. `screen` allows you to keep something running even after you quit the SSH session.  
    Start a new screen session with `screen`, and detach with `Ctrl+A, D`.
+4. `apt-nonroot-install` let you install some APT packages without root.  
+   __It does not automatically install required dependencies.__  
+   To find out what dependencies a package needs , use `apt-check-deps.sh`.

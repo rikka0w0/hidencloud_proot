@@ -21,6 +21,20 @@ export FEX_OUTPUTLOG=stderr
 # export FEX_TSOENABLED=0
 # export FEX_HOSTFEATURES=disablesve,disableatomics,disableflagm,disableflagm2,disablerng,disablecrypto,disablefcma,disablelrcpc,disablelrcpc2,disableafp,disablepmull128,disablesvebitperm
 
+# Note: this function does not take care of the dependency tree!
+apt-nonroot-install() {
+    mkdir -p "$WORK/deb"
+    (
+        cd "$WORK/deb"
+        apt download "$@"
+    )
+
+    for deb in "$WORK/deb"/*.deb; do
+        dpkg-deb -x "$deb" "$TOOLS"
+    done
+    exit 0
+}
+
 nss-run() {
     if [ "$#" -lt 1 ]; then
         echo "usage: nss-run COMMAND [ARG...]" >&2
