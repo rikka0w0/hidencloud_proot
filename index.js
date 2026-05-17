@@ -91,8 +91,14 @@ console.log(`Wrote ${pubkeys.length} key(s) to /home/container/.ssh/authorized_k
 // Run start-up scripts
 try {
   await runCommand(path.join(__dirname, 'setup-env.sh'));
-  runCommand(path.join(__dirname, 'sslh.sh'), [PORT]);
-  runCommand(path.join(__dirname, 'sshd.sh'));
+  
+  // Start sslh and sshd as background processes, but log any errors they produce
+  runCommand(path.join(__dirname, 'sslh.sh'), [PORT]).catch((err) => {
+    console.error("sslh.sh failed:", err);
+  });
+  runCommand(path.join(__dirname, 'sshd.sh')).catch((err) => {
+    console.error("sshd.sh failed:", err);
+  });
 
   // [HIDENCLOUD] Server marked as running...
   console.log("change this text 1");
