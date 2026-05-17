@@ -32,7 +32,6 @@ apt-nonroot-install() {
     for deb in "$WORK/deb"/*.deb; do
         dpkg-deb -x "$deb" "$TOOLS"
     done
-    exit 0
 }
 
 nss-run() {
